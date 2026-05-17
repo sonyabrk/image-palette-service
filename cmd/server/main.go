@@ -8,6 +8,9 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/sonyabrk/image-palette-service/internal/cache"
+	"github.com/sonyabrk/image-palette-service/internal/config"
 )
 
 func main() {
