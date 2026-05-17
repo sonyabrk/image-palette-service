@@ -1,0 +1,38 @@
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# go build results
+image-palette-service
+
+*.test
+
+*.prof
+
+.env
+
+# Dependencies
+vendor/
+
+# System
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+
+# Swagger 
+docs/
