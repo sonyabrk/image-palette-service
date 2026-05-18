@@ -52,6 +52,8 @@ func Analyze(pool *worker.Pool) http.HandlerFunc {
 		}
 
 		result, err := pool.Submit(data)
+		TrackRequest(err == nil)
+
 		if err != nil {
 			if errors.Is(err, ErrUnsupportedFormat) {
 				writeError(w, http.StatusBadRequest, "неподдерживаемый формат изображения")

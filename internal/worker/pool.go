@@ -19,18 +19,20 @@ type jobResult struct {
 }
 
 type Pool struct {
-	jobs  chan Job
-	proc  *processor.Processor
-	cache *cache.Cache
-	done  chan struct{}
+	jobs       chan Job
+	proc       *processor.Processor
+	cache      *cache.Cache
+	done       chan struct{}
+	trackCache func(hit bool)
 }
 
-func NewPool(n int, proc *processor.Processor, c *cache.Cache) *Pool {
+func NewPool(n int, proc *processor.Processor, c *cache.Cache, trackCache func(bool)) *Pool {
 	p := &Pool{
-		jobs:  make(chan Job, 100),
-		proc:  proc,
-		cache: c,
-		done:  make(chan struct{}),
+		jobs:       make(chan Job, 100),
+		proc:       proc,
+		cache:      c,
+		done:       make(chan struct{}),
+		trackCache: trackCache,
 	}
 
 	for i := 0; i < n; i++ {
@@ -51,8 +53,10 @@ func (p *Pool) runWorker() {
 func (p *Pool) process(data []byte) (*processor.Result, error) {
 	key := hashImage(data)
 	if cached, ok := p.cache.Get(key); ok {
+		p.trackCache(true)
 		return cached.(*processor.Result), nil
 	}
+	p.trackCache(false)
 
 	result, err := p.proc.Analyze(data)
 	if err != nil {
