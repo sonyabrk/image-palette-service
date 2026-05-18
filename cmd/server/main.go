@@ -11,6 +11,8 @@ import (
 
 	"github.com/sonyabrk/image-palette-service/internal/cache"
 	"github.com/sonyabrk/image-palette-service/internal/config"
+	"github.com/sonyabrk/image-palette-service/internal/processor"
+	"github.com/sonyabrk/image-palette-service/internal/worker"
 )
 
 func main() {
