@@ -65,7 +65,34 @@ func calculateMoodX(palette []RGB, avgSaturation float64) float64 {
 	significantColors := countSignificantColors(palette)
 	diversityScore := float64(significantColors-1) / float64(len(palette)-1)
 
-	return diversityScore*0.6 + avgSaturation*0.4
+	saturationWeight := 0.2 + avgSaturation*0.8
+
+	contrastScore := paletteContrast(palette)
+
+	return (diversityScore*saturationWeight)*0.40 +
+		contrastScore*0.35 +
+		avgSaturation*0.25
+}
+
+func paletteContrast(palette []RGB) float64 {
+	if len(palette) == 0 {
+		return 0
+	}
+
+	minBrightness := 1.0
+	maxBrightness := 0.0
+
+	for _, c := range palette {
+		b, _ := brightnessAndSaturation(c)
+		if b < minBrightness {
+			minBrightness = b
+		}
+		if b > maxBrightness {
+			maxBrightness = b
+		}
+	}
+
+	return maxBrightness - minBrightness
 }
 
 func countSignificantColors(palette []RGB) int {
@@ -77,7 +104,7 @@ func countSignificantColors(palette []RGB) int {
 	for _, candidate := range palette[1:] {
 		isSignificant := true
 		for _, existing := range significant {
-			if colorDistance(candidate, existing) < 30 {
+			if colorDistance(candidate, existing) < 50 {
 				isSignificant = false
 				break
 			}
@@ -104,7 +131,7 @@ func clamp(v float64) float64 {
 		return 0
 	}
 
-	if v > 0 {
+	if v > 1 {
 		return 1
 	}
 
