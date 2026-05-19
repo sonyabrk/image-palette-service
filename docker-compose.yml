@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  image-palette-service:
+    build: .
+
+    ports:
+      - "8080:8080"
+
+    env_file:
+      - .env
+    
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    restart: unless-stopped

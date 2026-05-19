@@ -11,6 +11,7 @@ import (
 
 	"github.com/sonyabrk/image-palette-service/internal/cache"
 	"github.com/sonyabrk/image-palette-service/internal/config"
+	"github.com/sonyabrk/image-palette-service/internal/handler"
 	"github.com/sonyabrk/image-palette-service/internal/processor"
 	"github.com/sonyabrk/image-palette-service/internal/worker"
 )
@@ -19,11 +20,11 @@ func main() {
 	cfg := config.Load()
 	memCache := cache.New(time.Duration(cfg.CacheTTL) * time.Second)
 	proc := processor.New(cfg.MaxClusters)
-	pool := worker.NewPool(cfg.Workers, proc, memCache)
-	mux := http.NewServerMux()
+	pool := worker.NewPool(cfg.Workers, proc, memCache, handler.TrackCache)
+	mux := http.NewServeMux()
 
 	mux.HandleFunc("POST /analyze", handler.Analyze(pool))
-	mux.HandleFunc("GET /metrics", handler.Heath())
+	mux.HandleFunc("GET /health", handler.Health())
 	mux.HandleFunc("GET /metrics", handler.Metrics())
 
 	srv := &http.Server{
